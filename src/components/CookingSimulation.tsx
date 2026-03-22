@@ -22,20 +22,26 @@ export default function CookingSimulation({ stage, ingredients, theme, spice }: 
         let soundTimeout: NodeJS.Timeout;
 
         if (stage === 'boiling') {
-            playSound('/sounds/boil.mp3', 0.3, true, "boil"); // loop
-            playSound('/sounds/fire.mp3', 0.2, true, "fire"); // background fire
-            playSound('/sounds/fry.mp3', 0.4, true, "fry");   // sizzling/frying
+            console.log("🔊 SYNC: Auto-Trigger Trial by Fire (Fire + Boil)");
+            playSound('/sounds/boil.mp3', 0.3, true, "boil"); 
+            playSound('/sounds/fire.mp3', 0.2, true, "fire"); 
             
-            // 🔥 Master Sync: 15 Seconds Only as requested
             soundTimeout = setTimeout(() => {
-                stopSound("boil");
+                console.log("🔊 SYNC: Auto-Stop Fire Level");
                 stopSound("fire");
-                stopSound("fry");
-            }, 15000);
+                stopSound("boil");
+            }, 12000);
         }
 
         if (stage === 'ingredients') {
+            console.log("🔊 SYNC: Auto-Trigger Forging Flavors (Fry + Chop)");
+            playSound('/sounds/fry.mp3', 0.4, true, "fry"); 
             playSound('/sounds/chop.mp3', 0.5);
+            
+            soundTimeout = setTimeout(() => {
+                console.log("🔊 SYNC: Auto-Stop Fry Level");
+                stopSound("fry");
+            }, 12000);
         }
 
         if (stage === 'noodles') {
