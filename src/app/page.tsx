@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { playSound, stopSound, speakSensei } from '@/lib/soundManager';
+import { playSound, stopSound, speakSensei, stopAllSounds } from '@/lib/soundManager';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import ChatInterface from '@/components/ChatInterface';
@@ -63,6 +63,7 @@ export default function Home() {
       setChatFullScreen(false);
       if (voiceTimeoutRef.current) clearTimeout(voiceTimeoutRef.current);
       window.speechSynthesis.cancel();
+      stopAllSounds(); // Ensure all cooking audio stops on exit
     };
     window.addEventListener("openChatFull", handleOpen);
     window.addEventListener("closeChatFull", handleClose);
@@ -230,7 +231,7 @@ Built with AI Sensei 🍜`;
   }, [isTyping, chatFullScreen]);
 
   const handleCardSelect = (text: string) => {
-    playSound('serve');
+    playSound('/sounds/serve.mp3', 0.8);
     const ramenId = text.split(" ")[0].toLowerCase();
 
     const selectedTheme = ramenThemes[ramenId as keyof typeof ramenThemes];

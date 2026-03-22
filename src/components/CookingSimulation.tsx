@@ -14,12 +14,19 @@ interface CookingSimulationProps {
 export default function CookingSimulation({ stage, ingredients, theme, spice, type }: CookingSimulationProps) {
     const [activeTopping, setActiveTopping] = useState<string | null>(null);
     const isFryStyle = type.toUpperCase() === 'MISO' || type.toUpperCase() === 'VEG';
+    const lastStageRef = React.useRef<string>('');
 
     useEffect(() => {
         let soundTimeout: NodeJS.Timeout;
-        // Step 1: Terminate active audio loops before starting new stage
 
-        if (stage === 'boiling') {
+        // Step 1: Terminate active audio loops before starting new stage
+        if (stage !== lastStageRef.current) {
+            stopSound("boil");
+            stopSound("fire");
+            stopSound("fry");
+        }
+
+        if (stage === 'boiling' && stage !== lastStageRef.current) {
             // Step 2: Trigger Stage Start (Trial by Fire / Frying)
             playSound('/sounds/boil.mp3', 0.3, true, "boil"); 
             
@@ -36,23 +43,26 @@ export default function CookingSimulation({ stage, ingredients, theme, spice, ty
             }, 12000);
         }
 
-        if (stage === 'ingredients') {
+        if (stage === 'ingredients' && stage !== lastStageRef.current) {
             // Step 3: Trigger Ingredients Stage (Chopping)
             playSound('/sounds/chop.mp3', 0.5);
         }
 
-        if (stage === 'noodles') {
+        if (stage === 'noodles' && stage !== lastStageRef.current) {
             // Step 4: Trigger Noodles Stage (Drop)
             playSound('/sounds/noodles-drop.mp3', 0.6);
         }
 
-        if (stage === 'plating') {
+        if (stage === 'plating' && stage !== lastStageRef.current) {
             // Step 5: Trigger Plating Stage (Serve)
             playSound('/sounds/serve.mp3', 0.7);
             stopSound("boil");
         }
 
-        // Step 6: Handle spice-level atmospheric effects
+        // Update ref after handling triggers
+        lastStageRef.current = stage;
+
+        // Step 6: Handle spice-level atmospheric effects (these can re-trigger on spice change)
         if (spice === "MAXIMUM FIRE") {
             playSound('/sounds/fire-burst.mp3', 0.9);
         } else if (spice === "HIGH") {
@@ -62,7 +72,8 @@ export default function CookingSimulation({ stage, ingredients, theme, spice, ty
         return () => {
             if (soundTimeout) clearTimeout(soundTimeout);
             // Step 7: Final stage cleanup
-            if (stage === 'plating') {
+            if (stage === 'idle' || stage === 'plating') {
+                stopSound("boil");
                 stopSound("fire");
                 stopSound("fry");
             }
