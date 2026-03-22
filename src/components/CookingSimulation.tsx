@@ -17,10 +17,21 @@ export default function CookingSimulation({ stage, ingredients, theme, spice }: 
         // Stop previous looping sounds
         stopSound("boil");
         stopSound("fire");
+        stopSound("fry");
+
+        let soundTimeout: NodeJS.Timeout;
 
         if (stage === 'boiling') {
             playSound('/sounds/boil.mp3', 0.3, true, "boil"); // loop
             playSound('/sounds/fire.mp3', 0.2, true, "fire"); // background fire
+            playSound('/sounds/fry.mp3', 0.4, true, "fry");   // sizzling/frying
+            
+            // 🔥 Master Sync: 15 Seconds Only as requested
+            soundTimeout = setTimeout(() => {
+                stopSound("boil");
+                stopSound("fire");
+                stopSound("fry");
+            }, 15000);
         }
 
         if (stage === 'ingredients') {
@@ -44,6 +55,7 @@ export default function CookingSimulation({ stage, ingredients, theme, spice }: 
         }
 
         return () => {
+            if (soundTimeout) clearTimeout(soundTimeout);
             // cleanup on stage change
             if (stage === 'plating') {
                 stopSound("fire");
