@@ -108,7 +108,7 @@ Save favorite recipes
 AR cooking mode 👀
 
 
- Live webapp link:-   https://ramenchatbot.vercel.app/
+ Live webapp link:-   https://ramenchatbot-1wtdpykmg-astha-s-projects-35d28306.vercel.app/
  
 🧑‍🍳 Author
 Astha Singh
