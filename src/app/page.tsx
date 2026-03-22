@@ -41,6 +41,7 @@ export default function Home() {
   // 🗣️ Immediate Mute Trigger
   useEffect(() => {
     if (!voiceEnabled && typeof window !== 'undefined') {
+      if (voiceTimeoutRef.current) clearTimeout(voiceTimeoutRef.current);
       window.speechSynthesis.cancel();
     }
   }, [voiceEnabled]);
@@ -60,6 +61,7 @@ export default function Home() {
     const handleOpen = () => setChatFullScreen(true);
     const handleClose = () => {
       setChatFullScreen(false);
+      if (voiceTimeoutRef.current) clearTimeout(voiceTimeoutRef.current);
       window.speechSynthesis.cancel();
     };
     window.addEventListener("openChatFull", handleOpen);
@@ -91,13 +93,21 @@ export default function Home() {
       .trim();
   };
 
+  const voiceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const addSenseiMessage = (text: string, media?: string) => {
     setMessages((prev: Message[]) => [...prev, { id: crypto.randomUUID(), role: 'sensei', content: text, media }]);
     
-    // 🔥 SENSEI SPEAKS
+    // 🔥 SENSEI SPEAKS - 10s Audio-First Experience
     if (voiceEnabled) {
+      if (voiceTimeoutRef.current) clearTimeout(voiceTimeoutRef.current);
+      
       const cleanText = sanitizeForSpeech(text);
-      if (cleanText) speakSensei(cleanText);
+      if (cleanText) {
+        voiceTimeoutRef.current = setTimeout(() => {
+          speakSensei(cleanText);
+        }, 10000); // 10 seconds of pure fire/frying sounds first
+      }
     }
 
     if (themeTimeout) clearTimeout(themeTimeout);
@@ -375,6 +385,7 @@ Built with AI Sensei 🍜`;
                   ingredients={selectedIngredients}
                   theme={theme}
                   spice={ramenState.spice}
+                  type={ramenState.type}
                 />
             </div>
 

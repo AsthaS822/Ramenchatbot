@@ -8,47 +8,47 @@ interface CookingSimulationProps {
     ingredients: string[];
     theme: any;
     spice: string;
+    type: string;
 }
 
-export default function CookingSimulation({ stage, ingredients, theme, spice }: CookingSimulationProps) {
+export default function CookingSimulation({ stage, ingredients, theme, spice, type }: CookingSimulationProps) {
     const [activeTopping, setActiveTopping] = useState<string | null>(null);
+    const isFryStyle = type.toUpperCase() === 'MISO' || type.toUpperCase() === 'VEG';
 
     useEffect(() => {
-        // Stop previous looping sounds
-        stopSound("boil");
-        stopSound("fire");
-        stopSound("fry");
-
         let soundTimeout: NodeJS.Timeout;
+        // Stop previous looping sounds
 
         if (stage === 'boiling') {
-            console.log("🔊 SYNC: Auto-Trigger Trial by Fire (Fire + Boil)");
+            console.log(`🔊 SYNC: Auto-Trigger ${isFryStyle ? "Fry" : "Fire"} Stage`);
             playSound('/sounds/boil.mp3', 0.3, true, "boil"); 
-            playSound('/sounds/fire.mp3', 0.2, true, "fire"); 
+            
+            if (isFryStyle) {
+                playSound('/sounds/fry.mp3', 0.4, true, "fry");
+            } else {
+                playSound('/sounds/fire.mp3', 0.2, true, "fire");
+            }
             
             soundTimeout = setTimeout(() => {
-                console.log("🔊 SYNC: Auto-Stop Fire Level");
+                console.log("🔊 SYNC: Auto-Stop Audio Levels");
                 stopSound("fire");
                 stopSound("boil");
-            }, 12000);
-        }
-
-        if (stage === 'ingredients') {
-            console.log("🔊 SYNC: Auto-Trigger Forging Flavors (Fry + Chop)");
-            playSound('/sounds/fry.mp3', 0.4, true, "fry"); 
-            playSound('/sounds/chop.mp3', 0.5);
-            
-            soundTimeout = setTimeout(() => {
-                console.log("🔊 SYNC: Auto-Stop Fry Level");
                 stopSound("fry");
             }, 12000);
         }
 
+        if (stage === 'ingredients') {
+            console.log("🔊 SYNC: Auto-Trigger Forging Flavors (Chop)");
+            playSound('/sounds/chop.mp3', 0.5);
+        }
+
         if (stage === 'noodles') {
+            console.log("🔊 SYNC: Auto-Trigger Noodle Storm");
             playSound('/sounds/noodles-drop.mp3', 0.6);
         }
 
         if (stage === 'plating') {
+            console.log("🔊 SYNC: Auto-Trigger Flame Masterpiece");
             playSound('/sounds/serve.mp3', 0.7);
             stopSound("boil");
         }
@@ -65,9 +65,10 @@ export default function CookingSimulation({ stage, ingredients, theme, spice }: 
             // cleanup on stage change
             if (stage === 'plating') {
                 stopSound("fire");
+                stopSound("fry");
             }
         };
-    }, [stage, spice]);
+    }, [stage, spice, type]);
 
     useEffect(() => {
         if (ingredients.length > 0) {
@@ -145,7 +146,7 @@ export default function CookingSimulation({ stage, ingredients, theme, spice }: 
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center z-40 w-[90%] md:w-auto">
                 <div className="bg-[#1A0E0A] text-white px-8 py-3 border-4 shadow-[8px_8px_0_var(--glow)] text-xl font-black uppercase tracking-widest transform -rotate-1 transition-all duration-700" style={{ borderColor: theme.primary, '--glow': theme.glow } as React.CSSProperties}>
                     {stage === 'idle' ? 'AWAITING ORDER' :
-                        stage === 'boiling' ? 'TRIAL BY FIRE' :
+                        stage === 'boiling' ? (isFryStyle ? 'FRYING INGREDIENTS' : 'TRIAL BY FIRE') :
                             stage === 'ingredients' ? 'FORGING FLAVORS' :
                                 stage === 'noodles' ? 'NOODLE STORM' : 'FLAME MASTERPIECE'}
                 </div>
