@@ -17,8 +17,9 @@ export function playSound(src: string, volume = 1, loop = false, key?: string) {
         activeSounds[key] = audio;
     }
 
+    console.log("🔊 SYNC: Trying to play " + src);
     audio.play().catch((err) => {
-        console.warn("Sound playback prevented:", err);
+        console.warn(`🔇 SYNC: Sound '${src}' was blocked. Click anywhere on the page to enable audio!`, err);
     });
 }
 
