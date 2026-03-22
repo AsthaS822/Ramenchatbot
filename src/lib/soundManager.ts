@@ -17,9 +17,9 @@ export function playSound(src: string, volume = 1, loop = false, key?: string) {
         activeSounds[key] = audio;
     }
 
-    console.log("🔊 SYNC: Trying to play " + src);
+    // Step 1: Execute sound playback with browser autoplay safety
     audio.play().catch((err) => {
-        console.warn(`🔇 SYNC: Sound '${src}' was blocked. Click anywhere on the page to enable audio!`, err);
+        console.warn(`[Audio Sync] Sound '${src}' blocked. Page interaction required.`, err);
     });
 }
 
@@ -34,18 +34,18 @@ export function stopSound(key: string) {
 export function speakSensei(text: string) {
     if (typeof window === 'undefined') return;
 
-    // Help browser load voices
+    // Step 2: Load available system voices for synthesiser
     if (window.speechSynthesis.getVoices().length === 0) {
         window.speechSynthesis.onvoiceschanged = () => speakSensei(text);
         return;
     }
 
-    // Cancel existing speech to avoid overlap
+    // Step 3: Clear active speech queue for zero-latency response
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
     
-    // Attempt to find a "Master / Deep / Male" voice (Initial Profile)
+    // Step 4: Configure authoritative "Master Chef" deep voice profile
     const voices = window.speechSynthesis.getVoices();
     const masterVoice = voices.find(v => 
         v.name.includes("Google Japanese") || 

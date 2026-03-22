@@ -17,10 +17,10 @@ export default function CookingSimulation({ stage, ingredients, theme, spice, ty
 
     useEffect(() => {
         let soundTimeout: NodeJS.Timeout;
-        // Stop previous looping sounds
+        // Step 1: Terminate active audio loops before starting new stage
 
         if (stage === 'boiling') {
-            console.log(`🔊 SYNC: Auto-Trigger ${isFryStyle ? "Fry" : "Fire"} Stage`);
+            // Step 2: Trigger Stage Start (Trial by Fire / Frying)
             playSound('/sounds/boil.mp3', 0.3, true, "boil"); 
             
             if (isFryStyle) {
@@ -30,7 +30,6 @@ export default function CookingSimulation({ stage, ingredients, theme, spice, ty
             }
             
             soundTimeout = setTimeout(() => {
-                console.log("🔊 SYNC: Auto-Stop Audio Levels");
                 stopSound("fire");
                 stopSound("boil");
                 stopSound("fry");
@@ -38,22 +37,22 @@ export default function CookingSimulation({ stage, ingredients, theme, spice, ty
         }
 
         if (stage === 'ingredients') {
-            console.log("🔊 SYNC: Auto-Trigger Forging Flavors (Chop)");
+            // Step 3: Trigger Ingredients Stage (Chopping)
             playSound('/sounds/chop.mp3', 0.5);
         }
 
         if (stage === 'noodles') {
-            console.log("🔊 SYNC: Auto-Trigger Noodle Storm");
+            // Step 4: Trigger Noodles Stage (Drop)
             playSound('/sounds/noodles-drop.mp3', 0.6);
         }
 
         if (stage === 'plating') {
-            console.log("🔊 SYNC: Auto-Trigger Flame Masterpiece");
+            // Step 5: Trigger Plating Stage (Serve)
             playSound('/sounds/serve.mp3', 0.7);
             stopSound("boil");
         }
 
-        // Spice-based intensity
+        // Step 6: Handle spice-level atmospheric effects
         if (spice === "MAXIMUM FIRE") {
             playSound('/sounds/fire-burst.mp3', 0.9);
         } else if (spice === "HIGH") {
@@ -62,7 +61,7 @@ export default function CookingSimulation({ stage, ingredients, theme, spice, ty
 
         return () => {
             if (soundTimeout) clearTimeout(soundTimeout);
-            // cleanup on stage change
+            // Step 7: Final stage cleanup
             if (stage === 'plating') {
                 stopSound("fire");
                 stopSound("fry");

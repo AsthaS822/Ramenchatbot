@@ -59,7 +59,7 @@ export default function ChatInterface({
     return (
         <div className="flex flex-col h-full bg-white border-4 border-[#1A0E0A] rounded-2xl shadow-[12px_12px_0px_#1A0E0A] overflow-hidden texture relative">
 
-            {/* Header */}
+            {/* Step 1: Branding and Controls Header */}
             <div className="p-4 border-b-4 border-[#1A0E0A] flex items-center justify-between transition-colors duration-700" style={{ backgroundColor: theme.primary }}>
                 <div className="flex items-center gap-3">
                     <div className="w-14 h-14 rounded-full border-4 border-[#1A0E0A] overflow-hidden bg-white shadow-[4px_4px_0_#1A0E0A]">
@@ -87,7 +87,7 @@ export default function ChatInterface({
                 </div>
             </div>
 
-            {/* Messages Area */}
+            {/* Step 2: Scrollable Conversation History */}
             <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin">
                 {messages.map((msg) => (
                     <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -127,7 +127,7 @@ export default function ChatInterface({
                 <div ref={bottomRef} />
             </div>
 
-            {/* Suggested Prompts */}
+            {/* Step 3: Fast-Action Recipe Shortcuts */}
             <div className="px-4 pb-4 flex gap-3 overflow-x-auto scrollbar-hide">
                 {suggestedPrompts.map((prompt, idx) => (
                     <button
@@ -143,7 +143,7 @@ export default function ChatInterface({
                 ))}
             </div>
 
-            {/* Input Area */}
+            {/* Step 4: AI Command Entry */}
             <div className="p-4 border-t-4 border-[#1A0E0A] bg-white">
                 <form onSubmit={handleSubmit} className="relative flex items-center">
                     <input

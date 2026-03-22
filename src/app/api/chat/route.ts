@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     try {
         const { message } = await req.json();
 
-        // 🍜 ROBUST DETECTION (FINAL FIX)
+        // Step 1: Detect specific ramen style keywords for enhanced targeting
         const ramenTypes = ["tonkotsu", "miso", "shoyu", "veg"];
         const isRamen = ramenTypes.some(type =>
             message.toLowerCase().includes(type)
@@ -86,7 +86,7 @@ STRICT RULES:
             };
         }
 
-        // 🚨 BONUS FIX: Short Answer Fallback
+        // Step 2: Handle short or incomplete AI responses with detailed fallbacks
         if (parsed.answer && parsed.answer.length < 200 && !text.includes("ingredient_reaction")) {
             parsed.answer = `Ingredients:
 - Fresh Ramen Noodles

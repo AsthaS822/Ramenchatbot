@@ -38,7 +38,7 @@ export default function Home() {
   const [facts, setFacts] = useState<string[]>([]);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
 
-  // 🗣️ Immediate Mute Trigger
+  // Step 1: Handle immediate speech cancellation on mute toggle
   useEffect(() => {
     if (!voiceEnabled && typeof window !== 'undefined') {
       if (voiceTimeoutRef.current) clearTimeout(voiceTimeoutRef.current);
@@ -98,7 +98,7 @@ export default function Home() {
   const addSenseiMessage = (text: string, media?: string) => {
     setMessages((prev: Message[]) => [...prev, { id: crypto.randomUUID(), role: 'sensei', content: text, media }]);
     
-    // 🔥 SENSEI SPEAKS - 10s Audio-First Experience
+    // Step 2: Queue Sensei voice response with 10-second cinematic delay
     if (voiceEnabled) {
       if (voiceTimeoutRef.current) clearTimeout(voiceTimeoutRef.current);
       
@@ -129,12 +129,12 @@ export default function Home() {
 
       const parsed = data;
 
-      let messageMedia: string = "/media/ramenoodles.mp4"; // Default Universal Fallback
+      let messageMedia: string = "/media/ramenoodles.mp4"; // Step 3: Default asset fallback
       const typeStr = (parsed.ramen && parsed.ramen.type) ? parsed.ramen.type.toLowerCase() : "";
       const userTextStr = text.toLowerCase();
       const stageStr = (parsed.ramen && parsed.ramen.stage) ? parsed.ramen.stage.toLowerCase() : "";
 
-      // Strong Image Mapping with Fallbacks
+      // Step 4: Map specific ramen types to background media assets
       switch (typeStr) {
         case "veg":
           messageMedia = "/media/vegramenai.avif";
@@ -250,10 +250,10 @@ Built with AI Sensei 🍜`;
       stage: 'boiling'
     }));
 
-    // Immersive Trigger
+    // Step 5: Transition to fullscreen immersion mode
     setChatFullScreen(true);
 
-    // Send the structured request to AI while showing a clean message in UI
+    // Step 6: Process user selection and initiate AI recipe sequence
     handleSendMessage(`I'LL TAKE THE ${ramenId.toUpperCase()} RAMEN, SENSEI!`);
 
     document.body.classList.add("flash");
