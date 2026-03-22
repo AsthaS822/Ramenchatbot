@@ -200,9 +200,14 @@ ${parsed.message ? `
   };
 
   const handleSendMessage = (text: string) => {
+    // Step 1: Immediately cancel any previous voice narration
+    if (voiceTimeoutRef.current) clearTimeout(voiceTimeoutRef.current);
+    if (typeof window !== 'undefined') window.speechSynthesis.cancel();
+
     setChatExpanded(true);
     
-    const isRecipe = text.toLowerCase().includes("how") || text.toLowerCase().includes("recipe");
+    // Step 2: Detect if request is a recipe/cooking command to trigger fullscreen
+    const isRecipe = text.toLowerCase().match(/(how to|recipe|cook|maggi|maggie|noodles)/i);
     if (isRecipe) {
       setChatFullScreen(true);
     }
@@ -231,6 +236,10 @@ Built with AI Sensei 🍜`;
   }, [isTyping, chatFullScreen]);
 
   const handleCardSelect = (text: string) => {
+    // Step 1: Immediately cancel any previous voice narration
+    if (voiceTimeoutRef.current) clearTimeout(voiceTimeoutRef.current);
+    if (typeof window !== 'undefined') window.speechSynthesis.cancel();
+
     playSound('/sounds/serve.mp3', 0.8);
     const ramenId = text.split(" ")[0].toLowerCase();
 

@@ -10,12 +10,12 @@ export async function POST(req: Request) {
         const { message } = await req.json();
 
         // Step 1: Detect specific ramen style keywords for enhanced targeting
-        const ramenTypes = ["tonkotsu", "miso", "shoyu", "veg"];
-        const isRamen = ramenTypes.some(type =>
-            message.toLowerCase().includes(type)
+        const keywords = ["tonkotsu", "miso", "shoyu", "veg", "ramen", "maggi", "maggie", "noodles", "recipe"];
+        const isRamenRequest = keywords.some(word =>
+            message.toLowerCase().includes(word)
         );
 
-        const finalMessage = isRamen
+        const finalMessage = isRamenRequest
             ? `Give FULL detailed recipe for ${message} with Ingredients and Steps. Make it rich and detailed.`
             : message;
 
@@ -84,24 +84,6 @@ STRICT RULES:
                 facts: [],
                 ramen: {}
             };
-        }
-
-        // Step 2: Handle short or incomplete AI responses with detailed fallbacks
-        if (parsed.answer && parsed.answer.length < 200 && !text.includes("ingredient_reaction")) {
-            parsed.answer = `Ingredients:
-- Fresh Ramen Noodles
-- Concentrated Broth Base (${parsed.ramen?.type || "House Style"})
-- Hand-selected Aroma Oil
-- Signature Toppings
-
-Steps:
-1. Bring the ritual broth to a rolling boil.
-2. Flash-cook the noodles for perfect bite (Al Dente).
-3. Combine the soul of the broth with the noodles.
-4. Layer with seasonings and your chosen toppings.
-5. Serve immediately while the steam carries the essence.
-
-(Sensei's Note: My spirit was brief, but the flavor remains deep. Enjoy this master recipe.)`;
         }
 
         return Response.json(parsed);
